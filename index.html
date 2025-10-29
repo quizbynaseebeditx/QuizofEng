@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Quiz by Naseeb</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .page {
+            padding: 40px 30px;
+            text-align: center;
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 2em;
+            color: #4a5568;
+            margin-bottom: 30px;
+        }
+        #home h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+        .btn-start {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.5em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .btn-start:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+        .btn-restart {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        .btn-restart:hover {
+            background: #38a169;
+            transform: scale(1.05);
+        }
+        #timer {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ed8936;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        #progress {
+            font-size: 1.5em;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        #question {
+            font-size: 2.2em;
+            margin: 40px 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 40px 0;
+        }
+        .option {
+            background: white;
+            border: 3px solid #e2e8f0;
+            padding: 25px;
+            font-size: 1.4em;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        .option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102,126,234,0.2);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border-color: #38a169;
+            transform: scale(1.02);
+        }
+        .btn-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        .btn-cont, .btn-submit {
+            padding: 18px 35px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        .btn-cont {
+            background: #48bb78;
+            color: white;
+            min-width: 150px;
+        }
+        .btn-cont:hover:not(:disabled) {
+            background: #38a169;
+            transform: scale(1.05);
+        }
+        .btn-cont:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-submit {
+            background: #f56565;
+            color: white;
+        }
+        .btn-submit:hover {
+            background: #e53e3e;
+            transform: scale(1.05);
+        }
+        .result-item {
+            font-size: 1.4em;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        .result-item span {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        @media (max-width: 600px) {
+            .container { width: 95%; margin: 20px; }
+            h1 { font-size: 2em; }
+            #question { font-size: 1.8em; padding: 20px; }
+            .option { font-size: 1.2em; padding: 20px; }
+            .btn-row { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <h1>Welcome to English Quiz by Naseeb</h1>
+            <p style="font-size: 1.2em; margin-bottom: 30px; color: #666;">Test your English Grammar, Vocabulary & Comprehension skills with 30 random questions!</p>
+            <button class="btn-start" onclick="startQuiz()">Start English Quiz</button>
+        </div>
+
+        <!-- Quiz Page -->
+        <div id="quiz" class="page">
+            <div id="timer">Time: 00:00</div>
+            <div id="progress">Question <span id="qnum">1</span> / 30</div>
+            <div id="question">Get ready...</div>
+            <div class="options">
+                <button class="option" id="b1"></button>
+                <button class="option" id="b2"></button>
+                <button class="option" id="b3"></button>
+                <button class="option" id="b4"></button>
+            </div>
+            <div class="btn-row">
+                <button id="continue" class="btn-cont" onclick="nextQuestion()" disabled>Continue</button>
+                <button class="btn-submit" onclick="submitQuiz()">Submit Quiz</button>
+            </div>
+        </div>
+
+        <!-- Result Page -->
+        <div id="result" class="page">
+            <h2>Quiz Completed!</h2>
+            <div class="result-item">Total Questions: <span id="total">30</span></div>
+            <div class="result-item">Attempted: <span id="att">0</span></div>
+            <div class="result-item">Correct: <span id="cor">0</span></div>
+            <div class="result-item">Wrong: <span id="wrg">0</span></div>
+            <div class="result-item">Time Taken: <span id="timeRes">00:00</span></div>
+            <p style="margin-top: 30px; font-size: 1.1em; color: #666;">Great job! Unattempted questions are counted as wrong.</p>
+            <button class="btn-restart" onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // All 178 English questions with options and correct answer index (0=A, 1=B, 2=C, 3=D)
+        const allQuestions = [
+            { q: "Which word is an abstract noun?", opts: ["courage", "honesty", "mountain", "river"], correct: 1 },
+            { q: "Identify the adjective of quality.", opts: ["tall", "five", "honest", "first"], correct: 2 },
+            { q: "Which is a collective noun?", opts: ["pen", "cat", "flock", "garden"], correct: 2 },
+            { q: "Identify the adverb of manner.", opts: ["tomorrow", "quickly", "often", "seldom"], correct: 1 },
+            { q: "Which is a demonstrative pronoun?", opts: ["he", "those", "them", "his"], correct: 1 },
+            { q: "Which is a reflexive pronoun?", opts: ["him", "his", "himself", "they"], correct: 2 },
+            { q: "Which is an interrogative pronoun?", opts: ["those", "their", "who", "her"], correct: 2 },
+            { q: "Choose the preposition.", opts: ["because", "since", "under", "quickly"], correct: 2 },
+            { q: "Identify the conjunction.", opts: ["near", "although", "high", "very"], correct: 1 },
+            { q: "Which is a proper noun?", opts: ["month", "city", "Karachi", "boy"], correct: 2 },
+            { q: "Which is a common noun?", opts: ["Ali", "teacher", "Pakistan", "Urdu"], correct: 1 },
+            { q: "Identify the verb of the sentence: They completed the task.", opts: ["they", "task", "completed", "the"], correct: 2 },
+            { q: "Which sentence has a linking verb?", opts: ["She sang loudly.", "They painted the wall.", "The soup tastes delicious.", "He jumped quickly."], correct: 2 },
+            { q: "Which is a transitive verb?", opts: ["sleep", "read", "go", "sit"], correct: 1 },
+            { q: "Which is an intransitive verb?", opts: ["give", "sleep", "build", "show"], correct: 1 },
+            { q: "Identify the adjective of number.", opts: ["tall", "three", "red", "we"], correct: 1 },
+            { q: "Which is a possessive pronoun?", opts: ["her", "ours", "them", "ours"], correct: 1 },
+            { q: "Which is a distributive pronoun?", opts: ["they", "each", "us", "ours"], correct: 1 },
+            { q: "Which is an indefinite pronoun?", opts: ["who", "which", "someone", "play"], correct: 2 },
+            { q: "Which is a relative pronoun?", opts: ["his", "that", "them", "goes"], correct: 1 },
+            { q: "She ___ her work before lunch.", opts: ["finishes", "finishing", "finished", "done"], correct: 2 },
+            { q: "We ___ in this city since 2010.", opts: ["lived", "live", "have lived", "living"], correct: 2 },
+            { q: "By next week, they ___ the project.", opts: ["complete", "completed", "will have completed", "completing"], correct: 2 },
+            { q: "If it rains, we ___ at home.", opts: ["stayed", "stay", "will stay", "staying"], correct: 2 },
+            { q: "When I reached, they ___ already left.", opts: ["have", "had", "has", "will have"], correct: 1 },
+            { q: "She ___ her homework now.", opts: ["do", "did", "is doing", "finish"], correct: 2 },
+            { q: "They ___ to Lahore last month.", opts: ["go", "going", "went", "living"], correct: 2 },
+            { q: "She ___ a letter yesterday.", opts: ["write", "writing", "wrote", "writes"], correct: 2 },
+            { q: "The sun ___ in the east.", opts: ["rise", "rises", "rose", "rising"], correct: 1 },
+            { q: "The players ___ cricket every evening.", opts: ["play", "played", "playing", "play"], correct: 0 },
+            { q: "He ___ a new car next year.", opts: ["buy", "bought", "will buy", "buying"], correct: 2 },
+            { q: "They ___ not at home yesterday.", opts: ["is", "are", "were", "goes"], correct: 2 },
+            { q: "She ___ in class daily.", opts: ["speak", "spoke", "speaks", "speaking"], correct: 2 },
+            { q: "They ___ the match tomorrow.", opts: ["play", "played", "will play", "playing"], correct: 2 },
+            { q: "He ___ to school every day.", opts: ["go", "gone", "goes", "present"], correct: 2 },
+            { q: "We ___ English since morning.", opts: ["studied", "studying", "have been studying", "study"], correct: 2 },
+            { q: "Ali ___ already ___ his work.", opts: ["has write", "had write", "has written", "had wrote"], correct: 2 },
+            { q: "She ___ to visit her aunt yesterday.", opts: ["go", "going", "went", "study"], correct: 2 },
+            { q: "They ___ dinner when the guest arrived.", opts: ["eat", "eaten", "were eating", "achievement"], correct: 2 },
+            { q: "The bell ___ before the class ended.", opts: ["ring", "rings", "had rung", "late"], correct: 2 },
+            { q: "Synonym of “ancient” is:", opts: ["modern", "old", "help", "goes"], correct: 1 },
+            { q: "Antonym of “victory” is:", opts: ["success", "defeat", "prize", "weak"], correct: 1 },
+            { q: "Synonym of “rapid” is:", opts: ["slow", "fast", "coward", "daring"], correct: 1 },
+            { q: "Antonym of “brave” is:", opts: ["strong", "bold", "coward", "buying"], correct: 2 },
+            { q: "Synonym of “assist” is:", opts: ["refuse", "ignore", "help", "goes"], correct: 2 },
+            { q: "Antonym of “expand” is:", opts: ["stretch", "big", "shrink", "stop"], correct: 2 },
+            { q: "Synonym of “fragile” is:", opts: ["strong", "delicate", "solid", "hard"], correct: 1 },
+            { q: "Antonym of “false” is:", opts: ["wrong", "true", "fake", "right"], correct: 1 },
+            { q: "Synonym of “tiny” is:", opts: ["huge", "small", "light", "large"], correct: 1 },
+            { q: "Antonym of “scarce” is:", opts: ["rare", "abundant", "little", "scanty"], correct: 1 },
+            { q: "Synonym of “reply” is:", opts: ["silence", "mad", "answer", "refuse"], correct: 2 },
+            { q: "Antonym of “beautiful” is:", opts: ["fair", "ugly", "neat", "pretty"], correct: 1 },
+            { q: "Synonym of “purchase” is:", opts: ["sell", "buy", "borrow", "lend"], correct: 1 },
+            { q: "Antonym of “lazy” is:", opts: ["slow", "active", "weak", "hard"], correct: 1 },
+            { q: "Synonym of “error” is:", opts: ["correct", "mistake", "right", "wrong"], correct: 1 },
+            { q: "Antonym of “strong” is:", opts: ["firm", "weak", "solid", "powerful"], correct: 1 },
+            { q: "Synonym of “begin” is:", opts: ["end", "start", "close", "finish"], correct: 1 },
+            { q: "Antonym of “victim” is:", opts: ["loser", "sufferer", "winner", "brave"], correct: 2 },
+            { q: "Synonym of “angry” is:", opts: ["calm", "mad", "weak", "peaceful"], correct: 1 },
+            { q: "Antonym of “day” is:", opts: ["sun", "night", "morning", "dark"], correct: 1 },
+            { q: "Correct spelling is:", opts: ["occassion", "ocasion", "occasion", "occassionn"], correct: 2 },
+            { q: "Correct spelling is:", opts: ["recive", "receeve", "receive", "reseive"], correct: 2 },
+            { q: "Correct spelling is:", opts: ["beleive", "believe", "belive", "beleeve"], correct: 1 },
+            { q: "Correct spelling is:", opts: ["acheive", "achieve", "achive", "acheeve"], correct: 1 },
+            { q: "Correct spelling is:", opts: ["tommorow", "tommoroww", "tomorow", "tomorrow"], correct: 3 },
+            { q: "Correct punctuation:", opts: ["where is Ali.", "Where is Ali", "Where is Ali?", "Where is ali?"], correct: 2 },
+            { q: "Correct punctuation:", opts: ["I am happy,", "I am happy.", "I am happy!", "I am happy?"], correct: 1 },
+            { q: "Correct punctuation:", opts: ["The teacher said “Sit down”.", "The teacher said, Sit down.", "The teacher said, “Sit down.”", "The teacher said “Sit down."], correct: 2 },
+            { q: "Correct capitalization:", opts: ["she went to islamabad.", "She went to Islamabad.", "She went to islamabad.", "she went to Islamabad."], correct: 1 },
+            { q: "Correct spelling is:", opts: ["goverment", "governmnet", "govarnment", "government"], correct: 3 },
+            { q: "The room is cleaned daily. Change into (Active form).", opts: ["They cleaned the room daily.", "They clean the room daily.", "They cleaning the room daily.", "They were cleaning the room daily."], correct: 1 },
+            { q: "The letter was written by Ali. Change into (Active)", opts: ["Ali writes the letter.", "Ali wrote the letter.", "Ali is writing the letter.", "Ali will write the letter."], correct: 1 },
+            { q: "They will announce the result tomorrow. Change into (Passive)", opts: ["The result is announcing tomorrow.", "The result was announced tomorrow.", "The result will be announced tomorrow.", "The result has been announced tomorrow."], correct: 2 },
+            { q: "The homework has been done. Change into (Active)", opts: ["The homework is doing.", "The homework was done.", "They have done the homework.", "They did the homework."], correct: 2 },
+            { q: "They are singing a song. Change into (Passive)", opts: ["A song was sung by them.", "A song is being sung by them.", "A song has been sung by them.", "A song will be sung by them."], correct: 1 },
+            { q: "The match will be played tomorrow. Change into (Active)", opts: ["They play the match tomorrow.", "They played the match tomorrow.", "They will play the match tomorrow.", "They are playing the match tomorrow."], correct: 2 },
+            { q: "The work was finished yesterday. Change into (Active)", opts: ["The work finishes yesterday.", "The work finish yesterday.", "They finished the work yesterday.", "They finishes the work yesterday."], correct: 2 },
+            { q: "A new road is being built. Change into (Active)", opts: ["They built a new road.", "They are building a new road.", "They build a new road.", "They were building a new road."], correct: 1 },
+            { q: "The song was sung by her. Change into (Active)", opts: ["She sings the song.", "She sang the song.", "She is singing the song.", "She will sing the song."], correct: 1 },
+            { q: "The book will be read by the students. Change into (Active)", opts: ["The students reads the book.", "The students reading the book.", "The students will read the book.", "The students read the book."], correct: 2 },
+            { q: "He said, “I am tired.” Change into (Indirect)", opts: ["He said that he is tired.", "He said that he was tired.", "He said he was tired.", "He says that he is tired."], correct: 1 },
+            { q: "She said to me, “Close the door.” Change into (Indirect)", opts: ["She said me to close the door.", "She said that close the door.", "She told me to close the door.", "She tells me to close the door."], correct: 2 },
+            { q: "He said, “I have finished my work.” Change into (Indirect)", opts: ["He said he has finished his work.", "He said that he had finished his work.", "He told he finished his work.", "He says that he had finished his work."], correct: 1 },
+            { q: "She said, “I will go tomorrow.” Change into (Indirect)", opts: ["She said that she will go tomorrow.", "She said that she would go the next day.", "She said she would go tomorrow.", "She said she go next day."], correct: 1 },
+            { q: "Ali said, “Don’t be late.” Change into (Indirect)", opts: ["Ali said me not to be late.", "Ali told me not to be late.", "Ali told not be late.", "Ali said not be late."], correct: 1 },
+            { q: "The teacher said, “Be quiet.” Change into (Indirect)", opts: ["The teacher said us be quiet.", "The teacher ordered us to be quiet.", "The teacher told be quiet.", "The teacher asked us quiet."], correct: 1 },
+            { q: "He said, “Where are you going?” Change into (Indirect)", opts: ["He asked where you are going.", "He asked where I was going.", "He asked me where I am going.", "He told me where you were going."], correct: 1 },
+            { q: "The boy said, “I like apples.” (Indirect)", opts: ["The boy say that he liked apples.", "The boy said that he liked apples.", "The boy said that he likes apples.", "The boy told he liked apples."], correct: 1 },
+            { q: "“As busy as a bee” is a:", opts: ["metaphor", "simile", "irony", "exaggeration"], correct: 1 },
+            { q: "“The wind whispered through the trees.” →", opts: ["metaphor", "simile", "personification", "hyperbole"], correct: 2 },
+            { q: "“The classroom was a zoo.” →", opts: ["simile", "metaphor", "exaggeration", "pe
